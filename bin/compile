@@ -50,6 +50,11 @@ BUILD_DIR=$APP_DIR
 export PATH=$BUILD_DIR/.heroku/miniconda/bin:$PATH
 export PYTHONUNBUFFERED=1
 export LANG=en_US.UTF-8
+export C_INCLUDE_PATH=/app/.heroku/vendor/include:$BUILD_DIR/.heroku/vendor/include:/app/.heroku/python/include:$C_INCLUDE_PATH
+export CPLUS_INCLUDE_PATH=/app/.heroku/vendor/include:$BUILD_DIR/.heroku/vendor/include:/app/.heroku/python/include:$CPLUS_INCLUDE_PATH
+export LIBRARY_PATH=/app/.heroku/vendor/lib:$BUILD_DIR/.heroku/vendor/lib:/app/.heroku/python/lib:$LIBRARY_PATH
+export LD_LIBRARY_PATH=/app/.heroku/vendor/lib:$BUILD_DIR/.heroku/vendor/lib:/app/.heroku/python/lib:$LD_LIBRARY_PATH
+export PKG_CONFIG_PATH=/app/.heroku/vendor/lib/pkg-config:$BUILD_DIR/.heroku/vendor/lib/pkg-config:/app/.heroku/python/lib/pkg-config:$PKG_CONFIG_PATH
 
 # Switch to the repo's context.
 cd $BUILD_DIR
@@ -73,7 +78,10 @@ set -e
 # Make profile.d directory.
 mkdir -p $(dirname $PROFILE_PATH)
 
-# Actuall do the conda steps.
+# Pylibmc support.
+source $BIN_DIR/steps/pylibmc
+
+# Actually do the conda steps.
 source $BIN_DIR/steps/conda_compile
 
 # ### Finalize
@@ -88,6 +96,8 @@ done
 # Set context environment variables.
 set-env PATH '$HOME/.heroku/miniconda/bin:$PATH'
 set-env PYTHONUNBUFFERED true
+set-env LIBRARY_PATH '/app/.heroku/vendor/lib:$LIBRARY_PATH'
+set-env LD_LIBRARY_PATH '/app/.heroku/vendor/lib:$LD_LIBRARY_PATH'
 set-default-env LANG en_US.UTF-8
 set-default-env PYTHONHASHSEED random
 set-default-env PYTHONPATH /app/
